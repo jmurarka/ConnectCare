@@ -13,7 +13,6 @@ import {
   Award, 
   UserCheck, 
   Target, 
-  FileCheck2, 
   Clock, 
   Map, 
   ShieldAlert,
@@ -25,11 +24,11 @@ import { useAuth } from '../context/AuthContext';
 export default function Sidebar({ activeTab, setActiveTab, mobileMenuOpen, setMobileMenuOpen }) {
   const { role } = useAuth();
 
-  // Menu items for Trainee Portal
+  // Menu items for Trainee Portal (Diagnostic gate is completed post-enrollment, replaced with Assignments)
   const traineeMenuItems = [
     { id: 'dashboard', label: 'Trainee Dashboard', icon: LayoutDashboard },
     { id: 'goals', label: 'Goal & Courses', icon: Target },
-    { id: 'diagnostic', label: 'Diagnostic Entry Gate', icon: FileCheck2 },
+    { id: 'assignments', label: 'Assignments & Submissions', icon: FileText },
     { id: 'availability', label: 'Availability Planner', icon: Clock },
     { id: 'roadmap', label: 'Personalized Roadmap', icon: Map },
     { id: 'kg', label: 'Knowledge Graph', icon: Network },
@@ -85,15 +84,15 @@ export default function Sidebar({ activeTab, setActiveTab, mobileMenuOpen, setMo
       {/* Mobile Drawer Overlay Background */}
       {mobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 z-30 md:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-slate-900/60 z-30 md:hidden backdrop-blur-sm"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
 
-      {/* Sidebar Container */}
+      {/* Sidebar Container - Institutional Slate Navy & Royal Blue Theme */}
       <aside className={`
         fixed md:static top-14 bottom-0 left-0 z-30
-        w-60 h-full bg-[#18181B] text-zinc-300 border-r border-zinc-800 flex flex-col justify-between overflow-hidden
+        w-60 h-full bg-[#0F172A] text-slate-300 border-r border-slate-800 flex flex-col justify-between overflow-hidden
         transform transition-transform duration-200 ease-in-out shrink-0
         ${mobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'}
       `}>
@@ -101,10 +100,10 @@ export default function Sidebar({ activeTab, setActiveTab, mobileMenuOpen, setMo
           
           <div>
             <div className="flex items-center justify-between px-2 mb-3">
-              <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                 {sectionTitle}
               </p>
-              <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-[#2D2820] text-[#C5A880] border border-[#524432]">
+              <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
                 {role}
               </span>
             </div>
@@ -120,11 +119,11 @@ export default function Sidebar({ activeTab, setActiveTab, mobileMenuOpen, setMo
                     className={`
                       w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all group
                       ${isActive 
-                        ? 'bg-[#2A2723] text-[#D4AF37] font-bold shadow-sm border-l-2 border-[#D4AF37]' 
-                        : 'text-zinc-400 hover:bg-zinc-800/70 hover:text-zinc-100'}
+                        ? 'bg-[#2563EB] text-white font-bold shadow-sm' 
+                        : 'text-slate-400 hover:bg-slate-800/80 hover:text-white'}
                     `}
                   >
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-[#D4AF37]' : 'text-zinc-400 group-hover:text-zinc-200'}`} />
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`} />
                     <span className="truncate">{item.label}</span>
                   </button>
                 );
@@ -132,19 +131,19 @@ export default function Sidebar({ activeTab, setActiveTab, mobileMenuOpen, setMo
             </nav>
           </div>
 
-          {/* Bottom Promo Wave Card (As in reference image) */}
-          <div className="p-3 bg-gradient-to-br from-[#2D2820] to-[#1F1C18] rounded-xl border border-[#483B2A] text-white space-y-2 relative overflow-hidden shadow-lg">
-            <div className="absolute right-0 bottom-0 opacity-20 w-24 h-24 pointer-events-none">
+          {/* Bottom Promo Blue Wave Card */}
+          <div className="p-3 bg-gradient-to-br from-[#1E3A8A] to-[#0F172A] rounded-xl border border-blue-800 text-white space-y-2 relative overflow-hidden shadow-lg">
+            <div className="absolute right-0 bottom-0 opacity-25 w-24 h-24 pointer-events-none">
               <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 100C40 100 60 50 100 0V100H0Z" fill="#C5A880"/>
+                <path d="M0 100C40 100 60 50 100 0V100H0Z" fill="#3B82F6"/>
               </svg>
             </div>
-            <p className="font-bold text-xs leading-snug text-amber-100">
-              Empowering Educators for a Smarter Tomorrow
+            <p className="font-bold text-xs leading-snug text-blue-100">
+              Capacity Connect Knowledge Graph Platform
             </p>
             <div className="flex items-center justify-between pt-1">
-              <span className="text-[10px] text-amber-200/70">Capacity KG Engine</span>
-              <div className="w-6 h-6 rounded-full bg-[#C5A880]/20 text-[#D4AF37] flex items-center justify-center border border-[#C5A880]/40">
+              <span className="text-[10px] text-blue-200/80">AI/ML Adaptive Engine</span>
+              <div className="w-6 h-6 rounded-full bg-blue-500/20 text-blue-300 flex items-center justify-center border border-blue-400/40">
                 <ArrowRight className="w-3 h-3" />
               </div>
             </div>
@@ -153,7 +152,7 @@ export default function Sidebar({ activeTab, setActiveTab, mobileMenuOpen, setMo
         </div>
 
         {/* Footer Info */}
-        <div className="p-3 border-t border-zinc-800/80 text-[10px] text-zinc-400 text-center flex items-center justify-center space-x-1.5 bg-[#141416]">
+        <div className="p-3 border-t border-slate-800 text-[10px] text-slate-400 text-center flex items-center justify-center space-x-1.5 bg-[#090D16]">
           <span>Capacity Connect v1.0.0</span>
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
           <span>Institutional</span>

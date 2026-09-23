@@ -2,14 +2,14 @@
 
 **Capacity Connect** is a modern web-based organizational learning and capacity-building platform designed for institutions, enterprises, and educational organizations. 
 
-Unlike traditional LMS platforms (which simply follow *register → watch videos → get certificate*), Capacity Connect embeds **three levels of intelligence**:
+Unlike traditional LMS platforms (which simply follow *register -> watch videos -> get certificate*), Capacity Connect embeds **three levels of intelligence**:
 1. **Level 1 — LMS Core**: Structured courses, module lessons, video lectures, PDFs, Colab notebooks, discussion boards, and digital certificates.
 2. **Level 2 — Analytics & Governance**: Progress tracking, concept mastery percentages, class competency heatmaps, and Admin PII security with audit trails.
 3. **Level 3 — Adaptive Intelligence (Knowledge Graph)**: Directed Acyclic Graph (DAG) prerequisite reasoning, 20-question diagnostic entry gates, weekly availability planning, personalized roadmap generation, grounded explanations, and human-in-the-loop educator overrides.
 
 ---
 
-## 🏛️ Institutional Design System & Aesthetics
+## Institutional Design System & Aesthetics
 
 Capacity Connect is styled after credible institutional portals (SWAYAM / NPTEL + modern university LMS):
 - **Paper Canvas Background**: `#F7F7F5`
@@ -19,23 +19,24 @@ Capacity Connect is styled after credible institutional portals (SWAYAM / NPTEL 
 
 ---
 
-## 👥 Three Role Workflows
+## Three Role Workflows
 
-### 🎓 1. Trainee Portal
+### 1. Trainee Portal
 - **Career Goal & Competency Explorer**: Map goals (e.g., *"Become AI/ML & LLM Solutions Engineer"*) to required competencies and course routes.
 - **Diagnostic Entry Gate Assessment**: Complete a 20-question pre-enrollment assessment to evaluate baseline knowledge across Python, Math/Stats, Data Analysis, ML Concepts, and Responsible AI.
-- **Learning Availability Planner**: Input daily available hours (Mon–Sun sliders) to automatically calculate weekly capacity and target completion dates.
+- **Learning Availability Planner**: Input daily available hours (Mon-Sun sliders) to automatically calculate weekly capacity and target completion dates.
 - **Personalized Roadmap**: Dynamic timeline fast-tracking mastered concepts (80%+ baseline) and scheduling targeted revision for knowledge gaps.
 - **Interactive Trainee Knowledge Graph**: Visual SVG DAG node map showing concept mastery statuses (`Strong`, `Proficient`, `Developing`, `Needs Revision`, `Blocked by Prerequisite`).
 - **Interactive Lesson Player**: Embedded lectures, downloadable PDF guides, Colab notebooks, formative MCQs, and discussion boards.
-- **Digital Certificates**: Official institutional certificate generator with unique code verification (scores strictly excluded from certificates).
+- **Assignments & Submissions**: Project repository submission, grade tracking, and trainer feedback.
+- **Digital Certificates**: Official institutional certificate generator with unique QR code verification.
 
-### 👨‍🏫 2. Trainer Educator Workspace
+### 2. Trainer Educator Workspace
 - **Enrollment Approval Queue**: Review diagnostic submissions (score, prerequisite threshold check) and approve or reject enrollment requests.
 - **Class Competency Heatmap**: Visualize cohort-level mastery distribution across concepts (Strong, Proficient, Developing, Weak) to identify class bottlenecks.
 - **Human-in-the-Loop AI Roadmap Override**: Review AI-generated student roadmaps, customize module sequences or practice hours, and log audit notes.
 
-### 🛡️ 3. Admin Governance Portal
+### 3. Admin Governance Portal
 - **Executive Platform Analytics**: Monitor total trainees, authorized trainers, active enrollments, and certificates issued.
 - **Platform Competency Health**: Aggregate knowledge graph analytics across courses.
 - **Sensitive PII Access Control**: Government ID / Aadhaar / Phone PII is masked by default. Requires Security PIN (`1234`) + OTP (`5678`) verification to unlock temporary access.
@@ -43,7 +44,7 @@ Capacity Connect is styled after credible institutional portals (SWAYAM / NPTEL 
 
 ---
 
-## 📚 Curriculum Structure (AI/ML Track)
+## Curriculum Structure (AI/ML Track)
 
 Pre-seeded with the complete **AI/ML Learning Path**:
 - `AIML-00`: Orientation & Pre-Enrollment Diagnostic Assessment
@@ -56,31 +57,49 @@ Pre-seeded with the complete **AI/ML Learning Path**:
 
 ---
 
-## 💻 Tech Stack
+## Tech Stack
 
 - **Frontend**: React (Vite build system) + Tailwind CSS + Lucide Icons + Custom SVG Knowledge Graph Renderer.
-- **Backend**: Python FastAPI REST API server.
-- **Database**: SQLite database (`capacity_connect.db`) via SQLAlchemy ORM.
+- **Backend**: Python FastAPI REST API server + Neo4j Graph Database + Gemini RAG Engine.
+- **Database**: SQLite database (`capacity_connect.db`) via SQLAlchemy ORM & Neo4j Cypher Graph.
 - **Engine Services**:
   - `kg_engine.py`: Graph DAG prerequisite traversal & concept mastery calculator.
+  - `neo4j_service.py`: Graph driver for Neo4j Cloud instance.
+  - `dynamic_replanner.py`: Priority-based dynamic replanning engine.
+  - `rag_explanation_engine.py`: Gemini-powered RAG grounded rationale generator.
   - `planning_engine.py`: Take-U-Forward style weekly availability capacity planner.
   - `seed.py`: Pre-seeded database populator with 7 courses, 20 diagnostic MCQs, and sample profiles.
 
 ---
 
-## 🚀 How to Set Up and Run Locally
+## How to Set Up and Run
 
-### Prerequisites
+### Option A: Running with Docker (Recommended)
+
+```bash
+# Build and launch backend and frontend containers
+docker compose up -d --build
+```
+
+Access endpoints:
+- Frontend Application: `http://localhost:3000` (or `http://localhost:8080`)
+- Backend API Docs: `http://localhost:8000/docs`
+
+---
+
+### Option B: Running Locally
+
+#### Prerequisites
 - Node.js (v18+)
 - Python (v3.10+)
 
-### 1. Clone Repository
+#### 1. Clone Repository
 ```bash
 git clone https://github.com/jmurarka/ConnectCare.git
 cd ConnectCare
 ```
 
-### 2. Backend Setup & Run
+#### 2. Backend Setup & Run
 ```bash
 # Navigate to backend directory
 cd backend
@@ -91,11 +110,11 @@ pip install -r requirements.txt
 # Seed SQLite database with AI/ML track, diagnostic MCQs & roles
 python seed.py
 
-# Start FastAPI server on http-[#127.0.0.1:8000](http://127.0.0.1:8000)
+# Start FastAPI server on http://127.0.0.1:8000
 python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-### 3. Frontend Setup & Run
+#### 3. Frontend Setup & Run
 ```bash
 # Open a new terminal and navigate to frontend directory
 cd frontend
@@ -103,25 +122,25 @@ cd frontend
 # Install Node dependencies
 npm install
 
-# Start Vite dev server on http-[#127.0.0.1:3000](http://127.0.0.1:3000)
-node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 3000
+# Start Vite dev server on http://127.0.0.1:3000
+npm run dev
 ```
 
 ---
 
-## 🔑 Demo Access & Role Credentials
+## Demo Access & Role Credentials
 
 Use the top-right navbar pill in the web application to switch roles seamlessly:
 
 | Role | Profile | Features |
 | --- | --- | --- |
-| 🎓 **Trainee** | Jhanvi Murarka | Career goals, 20-Q diagnostic, availability sliders, roadmap, personal KG |
-| 👨‍🏫 **Trainer** | Dr. Rajesh Kumar | Diagnostic approval queue, class competency heatmap, AI roadmap override |
-| 🛡️ **Admin** | System Admin | Platform metrics, platform KG, PII access (**PIN**: `1234`, **OTP**: `5678`), audit logs |
+| **Trainee** | Jhanvi Murarka | Career goals, 20-Q diagnostic, availability sliders, roadmap, personal KG |
+| **Trainer** | Dr. Rajesh Kumar | Diagnostic approval queue, class competency heatmap, AI roadmap override |
+| **Admin** | System Admin | Platform metrics, platform KG, PII access (**PIN**: `1234`, **OTP**: `5678`), audit logs |
 
 ---
 
-## 📜 Public Certificate Verification Demo
+## Public Certificate Verification Demo
 
 Test certificate verification on the **Digital Certificates** page using sample code:
 ```
@@ -130,5 +149,5 @@ CC-AIML-2026-000184
 
 ---
 
-## 📄 License
+## License
 Capacity Connect is released under the Institutional Academic License.

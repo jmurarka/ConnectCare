@@ -140,6 +140,15 @@ class MasteryState(Base):
     concept_id = Column(Integer, ForeignKey("concepts.id"))
     mastery_score = Column(Float, default=0.0) # 0.0 to 1.0
 
+class MasteryHistory(Base):
+    __tablename__ = "mastery_history"
+
+    id = Column(Integer, primary_key=True, index=True)
+    trainee_id = Column(Integer, ForeignKey("users.id"))
+    concept_id = Column(Integer, ForeignKey("concepts.id"))
+    score = Column(Float, nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+
 class Roadmap(Base):
     __tablename__ = "roadmaps"
 
@@ -162,6 +171,9 @@ class RoadmapItem(Base):
     week_number = Column(Integer, default=1)
     estimated_hours = Column(Float, default=4.0)
     status = Column(String, default="in_progress") # completed, in_progress, locked, skipped_mastered, needs_revision
+    action_type = Column(String, default="learn") # learn, review, reinforce
+    priority = Column(Integer, default=3) # 0, 1, 2, 3
+    operator_applied = Column(String, nullable=True) # REINSERTION, REMEDIATION, FORWARD_LEARNING, COMPRESSION
     reason_explanation = Column(Text)
 
     roadmap = relationship("Roadmap", back_populates="items")

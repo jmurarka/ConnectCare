@@ -8,7 +8,7 @@ from datetime import datetime
 
 import models
 import schemas
-from database import engine, get_db
+from database import engine, get_db, SessionLocal
 from services.kg_engine import (
     build_trainee_kg, 
     build_trainer_course_competency, 
@@ -39,16 +39,25 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:3000",
-        "http://127.0.0.1:8000"
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+def auto_seed_db():
+    try:
+        import database
+        db = database.SessionLocal()
+        user_count = db.query(models.User).count()
+        if user_count == 0:
+            print("[INFO] Empty database detected on startup. Executing automatic database seeding...")
+            import seed
+            seed.seed_database()
+        db.close()
+    except Exception as e:
+        print(f"[WARN] Auto-seed check skipped or non-fatal error: {e}")
 
 # ----------------------------
 # 1. AUTHENTICATION & USERS
@@ -1029,37 +1038,29 @@ def get_trainee_roadmap(
     current_user: Optional[models.User] = Depends(get_optional_current_user)
 ):
     target_trainee_id = trainee_id if trainee_id is not None else (current_user.id if current_user else 1)
-
     rm = db.query(models.Roadmap).filter(
         models.Roadmap.trainee_id == target_trainee_id,
         models.Roadmap.course_id == course_id
     ).first()
+    rm_data = generate_personalized_roadmap(db, target_trainee_id, course_id, {"Mon": 2, "Tue": 2, "Wed": 2, "Thu": 3, "Fri": 2, "Sat": 4, "Sun": 3})
+    if rm:
+        rm_data["is_trainer_overridden"] = rm.is_trainer_overridden
+    return rm_data
 
-    if not rm:
-        rm_data = generate_personalized_roadmap(db, target_trainee_id, course_id, {"Mon": 2, "Tue": 2, "Wed": 2, "Thu": 3, "Fri": 2, "Sat": 4, "Sun": 3})
-        return rm_data
-
-    items = db.query(models.RoadmapItem).filter(models.RoadmapItem.roadmap_id == rm.id).order_by(models.RoadmapItem.week_number).all()
-    res_items = []
-    for item in items:
-        concept = db.query(models.Concept).filter(models.Concept.id == item.concept_id).first()
-        res_items.append({
-            "id": item.id,
-            "concept_id": item.concept_id,
-            "title": concept.title if concept else "Concept",
-            "module_name": concept.module_name if concept else "Module",
-            "week_number": item.week_number,
-            "estimated_hours": item.estimated_hours,
-            "status": item.status,
-            "reason_explanation": item.reason_explanation
-        })
-
+@app.get("/api/trainee/roadmap/{course_id}/explain")
+def explain_trainee_roadmap(
+    course_id: int,
+    db: Session = Depends(get_db),
+    current_user: Optional[models.User] = Depends(get_optional_current_user)
+):
+    target_trainee_id = current_user.id if current_user else 1
+    rm_data = generate_personalized_roadmap(db, target_trainee_id, course_id, {"Mon": 2, "Tue": 2, "Wed": 2, "Thu": 3, "Fri": 2, "Sat": 4, "Sun": 3})
     return {
-        "roadmap_id": rm.id,
-        "weekly_capacity_hours": rm.weekly_capacity_hours,
-        "estimated_completion_date": rm.estimated_completion_date,
-        "is_trainer_overridden": rm.is_trainer_overridden,
-        "items": res_items
+        "course_id": course_id,
+        "trainee_id": target_trainee_id,
+        "rag_explanation": rm_data.get("rag_explanation", ""),
+        "operators_applied": rm_data.get("operators_applied", []),
+        "analysis": rm_data.get("analysis", "")
     }
 
 # ----------------------------

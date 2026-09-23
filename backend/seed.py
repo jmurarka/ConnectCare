@@ -129,18 +129,30 @@ def seed_database():
 
     # 3. Create Concepts & Prerequisite DAG
     concepts_data = [
-        # AIML-01
+        # AIML-01 Foundations
         (c1.id, "AIML01-C1", "Python Basics & Syntax", "Variables, data types, lists, dictionaries, functions & CS50 syntax", "Python Programming", 1, 4.0),
         (c1.id, "AIML01-C2", "Linear Algebra & Vectors", "Vectors, matrices, dot products & 3Blue1Brown linear algebra intuition", "Mathematics for ML", 2, 5.0),
         (c1.id, "AIML01-C3", "Calculus & Gradients", "Derivatives, partial gradients & loss function optimization intuition", "Mathematics for ML", 3, 5.0),
         (c1.id, "AIML01-C4", "Probability & Statistics", "Mean, median, variance, probability distributions, sampling & correlation", "Mathematics for ML", 4, 4.0),
         (c1.id, "AIML01-C5", "NumPy & pandas Data Wrangling", "Array manipulation, pandas DataFrame cleaning, filtering & Matplotlib visualization", "Data Analysis Tools", 5, 6.0),
 
-        # AIML-02
-        (c2.id, "AIML02-C1", "ML Workflow & Problem Framing", "Regression vs classification vs clustering, train/val/test splits & scikit-learn pipeline", "ML Workflow", 1, 4.0),
-        (c2.id, "AIML02-C2", "Linear & Logistic Regression", "Loss functions, gradient descent, MAE, RMSE, precision, recall & ROC-AUC", "Supervised Learning", 2, 6.0),
-        (c2.id, "AIML02-C3", "Decision Trees & Random Forests", "Tree split criteria, ensemble learning, overfitting & hyperparameter tuning", "Supervised Learning", 3, 6.0),
-        (c2.id, "AIML02-C4", "Unsupervised Clustering & PCA", "K-means clustering, silhouette score, dimensionality reduction with PCA", "Unsupervised Learning", 4, 5.0),
+        # AIML-02 Core Machine Learning & AI Domain Graph
+        (c2.id, "AIML02-C1", "Python Basics & Syntax", "Variables, data types, lists, dictionaries & functions", "Python Foundations", 1, 4.0),
+        (c2.id, "AIML02-C2", "Linear Algebra & Matrices", "Vectors, matrices, dot products & matrix operations", "Mathematics for ML", 2, 5.0),
+        (c2.id, "AIML02-C3", "Calculus & Gradients", "Derivatives, partial gradients & loss function optimization intuition", "Mathematics for ML", 3, 5.0),
+        (c2.id, "AIML02-C4", "Probability & Statistics", "Mean, median, variance, probability distributions, sampling & correlation", "Mathematics for ML", 4, 4.0),
+        (c2.id, "AIML02-C5", "NumPy Array Processing", "Vectorized computing, array slicing & matrix manipulation", "Data Science Tools", 5, 5.0),
+        (c2.id, "AIML02-C6", "Pandas Data Wrangling", "DataFrame filtering, aggregation, missing data handling & merging", "Data Science Tools", 6, 6.0),
+        (c2.id, "AIML02-C7", "Scikit-Learn ML Toolkit", "Estimators, transformers, train/test split & scikit-learn pipeline", "Data Science Tools", 7, 5.0),
+        (c2.id, "AIML02-C8", "Linear & Logistic Regression", "Loss functions, gradient descent, MAE, RMSE, precision, recall & ROC-AUC", "Supervised Learning", 8, 6.0),
+        (c2.id, "AIML02-C9", "Decision Trees & Random Forests", "Tree split criteria, ensemble learning, overfitting & hyperparameter tuning", "Supervised Learning", 9, 6.0),
+        (c2.id, "AIML02-C10", "Support Vector Machines (SVM)", "Hyperplane boundaries, margin maximization & kernel trick intuition", "Supervised Learning", 10, 5.0),
+        (c2.id, "AIML02-C11", "Gradient Boosting (XGBoost)", "Boosting ensemble, feature importance, XGBoost & LightGBM", "Supervised Learning", 11, 6.0),
+        (c2.id, "AIML02-C12", "K-Means Clustering", "Centroid initialization, inertia, elbow method & silhouette score", "Unsupervised Learning", 12, 5.0),
+        (c2.id, "AIML02-C13", "Principal Component Analysis (PCA)", "Dimensionality reduction, variance retention & feature projection", "Unsupervised Learning", 13, 5.0),
+        (c2.id, "AIML02-C14", "Neural Networks & Backprop", "Perceptrons, activation functions (ReLU, Sigmoid), feedforward & backpropagation", "Deep Learning", 14, 6.0),
+        (c2.id, "AIML02-C15", "Convolutional Networks (CNNs)", "Convolutional filters, max pooling & computer vision classification", "Deep Learning", 15, 7.0),
+        (c2.id, "AIML02-C16", "Transformers & LLMs", "Self-attention mechanism, multi-head attention, Hugging Face & RAG applications", "LLM & Generative AI", 16, 8.0),
 
         # AIML-03
         (c3.id, "AIML03-C1", "Neural Network Fundamentals", "Perceptrons, activation functions (ReLU, Sigmoid), feedforward & backpropagation", "Neural Network Basics", 1, 6.0),
@@ -169,17 +181,35 @@ def seed_database():
 
     # Prerequisites DAG Edges
     prereqs = [
+        # AIML-01
         (c_map["AIML01-C2"], c_map["AIML01-C1"]),
         (c_map["AIML01-C5"], c_map["AIML01-C1"]),
-        (c_map["AIML02-C1"], c_map["AIML01-C5"]),
-        (c_map["AIML02-C2"], c_map["AIML01-C2"]),
-        (c_map["AIML02-C2"], c_map["AIML01-C3"]),
-        (c_map["AIML02-C3"], c_map["AIML02-C1"]),
-        (c_map["AIML03-C1"], c_map["AIML02-C2"]),
+
+        # AIML-02 Complete Domain Graph Edges
+        (c_map["AIML02-C5"], c_map["AIML02-C1"]), # Python -> NumPy
+        (c_map["AIML02-C6"], c_map["AIML02-C1"]), # Python -> Pandas
+        (c_map["AIML02-C7"], c_map["AIML02-C5"]), # NumPy -> Scikit-Learn
+        (c_map["AIML02-C7"], c_map["AIML02-C6"]), # Pandas -> Scikit-Learn
+        (c_map["AIML02-C8"], c_map["AIML02-C2"]), # Linear Algebra -> Regression
+        (c_map["AIML02-C8"], c_map["AIML02-C4"]), # Statistics -> Regression
+        (c_map["AIML02-C8"], c_map["AIML02-C7"]), # Scikit-Learn -> Regression
+        (c_map["AIML02-C9"], c_map["AIML02-C7"]), # Scikit-Learn -> Decision Trees
+        (c_map["AIML02-C10"], c_map["AIML02-C2"]),# Linear Algebra -> SVM
+        (c_map["AIML02-C10"], c_map["AIML02-C7"]),# Scikit-Learn -> SVM
+        (c_map["AIML02-C11"], c_map["AIML02-C9"]),# Decision Trees -> XGBoost
+        (c_map["AIML02-C12"], c_map["AIML02-C7"]),# Scikit-Learn -> K-Means
+        (c_map["AIML02-C13"], c_map["AIML02-C2"]),# Linear Algebra -> PCA
+        (c_map["AIML02-C14"], c_map["AIML02-C3"]),# Calculus -> Neural Networks
+        (c_map["AIML02-C14"], c_map["AIML02-C8"]),# Regression -> Neural Networks
+        (c_map["AIML02-C15"], c_map["AIML02-C14"]),# Neural Networks -> CNNs
+        (c_map["AIML02-C16"], c_map["AIML02-C14"]),# Neural Networks -> Transformers
+
+        # Advanced Tracks
+        (c_map["AIML03-C1"], c_map["AIML02-C8"]),
         (c_map["AIML03-C2"], c_map["AIML03-C1"]),
         (c_map["AIML04-C1"], c_map["AIML03-C1"]),
         (c_map["AIML04-C2"], c_map["AIML04-C1"]),
-        (c_map["AIML05-C1"], c_map["AIML02-C2"]),
+        (c_map["AIML05-C1"], c_map["AIML02-C8"]),
         (c_map["AIML05-C2"], c_map["AIML05-C1"])
     ]
 

@@ -12,6 +12,7 @@ import LessonPlayerView from './components/views/LessonPlayerView';
 import TrainerPortalView from './components/views/TrainerPortalView';
 import AdminPortalView from './components/views/AdminPortalView';
 import CertificateView from './components/views/CertificateView';
+import AssignmentsView from './components/views/AssignmentsView';
 
 import { RefreshCw } from 'lucide-react';
 import RoleSelectionLanding from './components/views/RoleSelectionLanding';
@@ -22,7 +23,7 @@ function MainLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const trainerTabs = ['overview', 'enrollments', 'analytics', 'overrides', 'curriculum', 'questionbank', 'assignments', 'discussions', 'ratings', 'cohorts', 'certificates', 'profile', 'trainer'];
-  const traineeTabs = ['dashboard', 'goals', 'diagnostic', 'availability', 'roadmap', 'kg', 'lesson', 'certificate'];
+  const traineeTabs = ['dashboard', 'goals', 'diagnostic', 'assignments', 'availability', 'roadmap', 'kg', 'lesson', 'certificate'];
   const adminTabs = ['admin', 'overview', 'enrollments', 'analytics', 'curriculum'];
 
   useEffect(() => {
@@ -42,11 +43,11 @@ function MainLayout() {
 
   if (loading) {
     return (
-      <div className="h-screen w-screen bg-[#18181B] text-[#D4AF37] flex items-center justify-center p-8">
-        <div className="text-center">
-          <RefreshCw className="w-10 h-10 animate-spin mx-auto mb-3 text-[#D4AF37]" />
+      <div className="h-screen w-screen bg-[#0F172A] text-white flex items-center justify-center p-8">
+        <div className="text-center space-y-3">
+          <RefreshCw className="w-10 h-10 animate-spin mx-auto text-[#2563EB]" />
           <p className="text-sm font-bold tracking-wider uppercase text-white">Initializing Capacity Connect Engine...</p>
-          <p className="text-xs text-zinc-400 mt-1">Verifying institutional RBAC security state</p>
+          <p className="text-xs text-slate-400">Verifying institutional RBAC security state</p>
         </div>
       </div>
     );
@@ -58,7 +59,7 @@ function MainLayout() {
   }
 
   return (
-    <div className="h-screen overflow-hidden flex flex-col bg-[#F7F7F5]">
+    <div className="h-screen overflow-hidden flex flex-col bg-[#F8FAFC]">
       
       {/* Top Navbar */}
       <Navbar
@@ -92,6 +93,7 @@ function MainLayout() {
               {activeTab === 'dashboard' && <TraineeDashboardView onNavigate={handleNavigate} />}
               {activeTab === 'goals' && <GoalCourseExplorerView onNavigate={handleNavigate} />}
               {activeTab === 'diagnostic' && <DiagnosticAssessmentView onNavigate={handleNavigate} />}
+              {activeTab === 'assignments' && <AssignmentsView onNavigate={handleNavigate} />}
               {activeTab === 'availability' && <AvailabilityPlannerView onNavigate={handleNavigate} />}
               {activeTab === 'roadmap' && <RoadmapKnowledgeGraphView onNavigate={handleNavigate} />}
               {activeTab === 'kg' && <RoadmapKnowledgeGraphView onNavigate={handleNavigate} />}

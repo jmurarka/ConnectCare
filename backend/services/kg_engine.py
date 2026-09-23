@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 import models
+from services.neo4j_service import is_neo4j_active, sync_course_concepts_to_neo4j, NEO4J_INSTANCE_ID
 
 def build_trainee_kg(db: Session, trainee_id: int, course_id: int):
     # Fetch concepts for course
@@ -14,9 +15,21 @@ def build_trainee_kg(db: Session, trainee_id: int, course_id: int):
             prereq_graph[p.concept_id] = []
         prereq_graph[p.concept_id].append(p.prerequisite_concept_id)
 
-    # Fetch trainee mastery states
+    # Sync to Neo4j if driver available
+    c_dicts = [{"id": c.id, "code": c.code, "title": c.title, "module_name": c.module_name, "estimated_hours": c.estimated_hours, "order_index": c.order_index} for c in concepts]
+    p_dicts = [{"concept_id": p.concept_id, "prerequisite_concept_id": p.prerequisite_concept_id} for p in prereqs]
+    sync_course_concepts_to_neo4j(course_id, c_dicts, p_dicts)
+
+    # Fetch trainee mastery states & score history
     masteries = db.query(models.MasteryState).filter(models.MasteryState.trainee_id == trainee_id).all()
     mastery_map = {m.concept_id: m.mastery_score for m in masteries}
+
+    history_records = db.query(models.MasteryHistory).filter(models.MasteryHistory.trainee_id == trainee_id).order_by(models.MasteryHistory.timestamp.asc()).all()
+    score_history = {}
+    for h in history_records:
+        if h.concept_id not in score_history:
+            score_history[h.concept_id] = []
+        score_history[h.concept_id].append(h.score)
 
     nodes = []
     edges = []
@@ -24,6 +37,8 @@ def build_trainee_kg(db: Session, trainee_id: int, course_id: int):
     for c in concepts:
         score = mastery_map.get(c.id, 0.0)
         req_prereq_ids = prereq_graph.get(c.id, [])
+        history = score_history.get(c.id, [])
+        prev_max = max(history) if history else 0.0
         
         # Calculate if prerequisites are satisfied
         prereq_satisfied = True
@@ -36,19 +51,22 @@ def build_trainee_kg(db: Session, trainee_id: int, course_id: int):
                 if p_concept:
                     prereq_reasons.append(f"Requires {p_concept.title} (Current: {int(p_score*100)}%, Need >= 60%)")
 
-        # Determine status
+        # Determine status adhering to DynamicReplanner Architecture
         if score >= 0.80:
             status = "strong"
             badge = "Strong (80-100%)"
         elif score >= 0.60:
             status = "proficient"
             badge = "Proficient (60-79%)"
-        elif score >= 0.40:
+        elif score >= 0.50:
             status = "developing"
-            badge = "Developing (40-59%)"
+            badge = "Developing (50-59%)"
+        elif score < 0.50 and prev_max >= 0.75:
+            status = "forgotten"
+            badge = f"Forgotten (Declined from {int(prev_max*100)}%)"
         elif score > 0.0:
             status = "weak"
-            badge = "Needs Revision (<40%)"
+            badge = "Needs Revision (<50%)"
         else:
             if not prereq_satisfied:
                 status = "blocked"
@@ -80,6 +98,8 @@ def build_trainee_kg(db: Session, trainee_id: int, course_id: int):
     return {
         "course_id": course_id,
         "trainee_id": trainee_id,
+        "neo4j_active": is_neo4j_active(),
+        "neo4j_instance_id": NEO4J_INSTANCE_ID,
         "nodes": nodes,
         "edges": edges
     }
