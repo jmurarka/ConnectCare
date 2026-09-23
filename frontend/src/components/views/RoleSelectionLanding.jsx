@@ -316,7 +316,7 @@ export default function RoleSelectionLanding() {
             /* -------------------------------------------------- */
             /* STEP 2: DYNAMIC ROLE AUTHENTICATION FORM VIEW      */
             /* -------------------------------------------------- */
-            <div className="bg-[#FAF8F4] border border-[#E6E0D4] rounded-2xl p-5 sm:p-6 shadow-xl shadow-amber-900/5 transition-all">
+            <div className="bg-[#FAF8F4] border border-[#E6E0D4] rounded-2xl p-5 sm:p-6 shadow-xl shadow-amber-900/5 transition-all max-h-[calc(100vh-130px)] overflow-y-auto">
               
               {/* Change Role Back Link */}
               <button
