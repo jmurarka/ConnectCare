@@ -10,11 +10,11 @@ services:
     env_file:
       - ./backend/.env
     environment:
-      - GEMINI_API_KEY=${GEMINI_API_KEY:-AIzaSyAaq8Ft_Bm7ZzRaQc2kWWWQxUvRZaaZxhg}
-      - NEO4J_INSTANCE_ID=${NEO4J_INSTANCE_ID:-d84b9a34}
-      - NEO4J_URI=${NEO4J_URI:-neo4j+s://d84b9a34.databases.neo4j.io}
-      - NEO4J_USERNAME=${NEO4J_USERNAME:-d84b9a34}
-      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-8EZ_zHONjfFm2P39rffJ1wP1lFO-EVl5DHk0QOp3jDU}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - NEO4J_INSTANCE_ID=${NEO4J_INSTANCE_ID}
+      - NEO4J_URI=${NEO4J_URI}
+      - NEO4J_USERNAME=${NEO4J_USERNAME}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
     volumes:
       - backend_storage:/app
 

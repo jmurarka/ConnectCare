@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyAaq8Ft_Bm7ZzRaQc2kWWWQxUvRZaaZxhg")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 def generate_rag_explanation(
     trainee_name: str,
